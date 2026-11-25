@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NORVINSK</title>
+    
+    <!-- SweetAlert 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* Сброс стилей */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1440px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Навигация */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #333333;
+            border-bottom: 1px solid #444;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links li {
+            cursor: pointer;
+            font-size: 14px;
+            color: #ccc;
+            text-align: center;
+            line-height: 1.2;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: color 0.25s, background-color 0.25s;
+            user-select: none;
+        }
+
+        .nav-links li:hover { color: #fff; background-color: #444; }
+        .nav-links li.active { color: #ffffff; font-weight: 600; background-color: #4a4a4a; }
+
+        .search-container { display: flex; gap: 10px; }
+
+        .search-input {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: #f0f0f0;
+            color: #333;
+            width: 200px;
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: #f0f0f0;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .search-btn:hover { background-color: #ddd; }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            background-image: url('norvinsk.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 400px;
+        }
+        .hero-subtitle {
+            font-size: 32px;
+            font-weight: 400;
+            color: #ffffff;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Новости */
+        .news-section { padding: 40px; }
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .news-card {
+            background-color: #333;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .news-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); }
+        .news-img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        .news-text { padding: 15px; font-size: 13px; color: #ccc; line-height: 1.5; }
+
+        /* Архив */
+        .archive-section { padding: 0 40px 40px 40px; }
+        .archive-layout {
+            display: flex;
+            gap: 30px;
+            background-color: #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .archive-left { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .archive-tabs {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #888;
+            border-bottom: 1px solid #444;
+            padding-bottom: 12px;
+        }
+        .archive-tabs span { cursor: pointer; transition: color 0.25s; }
+        .archive-tabs span:hover { color: #fff; }
+        .archive-tabs span.active {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 12px;
+            margin-bottom: -13px;
+        }
+        .news-feed { display: flex; flex-direction: column; gap: 18px; font-size: 13px; line-height: 1.6; color: #ccc; }
+        .news-feed .tag { color: #fff; font-weight: bold; }
+        .archive-map {
+            flex: 1;
+            border-radius: 8px;
+            min-height: 450px;
+            overflow: hidden;
+            background-color: #222;
+        }
+        .archive-map img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Чат */
+        .chat-section { padding: 0 40px 40px 40px; }
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            gap: 20px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 500px;
+        }
+        .chat-panel {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            text-align: center;
+            border: 1px dashed #555;
+        }
+        .chat-avatar {
+            width: 80px; height: 80px; border-radius: 50%;
+            margin-bottom: 12px; object-fit: cover;
+        }
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        
+        /* Форма аккаунта */
+        .form-section { padding: 0 40px 40px 40px; }
+        #accountForm {
+            background-color: #333;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        #accountForm label {
+            display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #ccc;
+        }
+        #accountForm input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background-color: #f0f0f0;
+            color: #333;
+            outline: none;
+        }
+        #accountForm input:focus { border-color: #c9a227; }
+        #accountForm button[type="submit"] {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            background-color: #c9a227;
+            color: #1a1a1a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #accountForm button[type="submit"]:hover { background-color: #e0b733; }
+
+        /* Анимация подсветки */
+        .flash { animation: flashHighlight 1.2s ease; }
+        @keyframes flashHighlight {
+            0% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); }
+            30% { box-shadow: 0 0 0 6px rgba(255, 200, 0, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); }
+        }
+
+        /* Адаптив */
+        @media (max-width: 900px) {
+            .navbar { flex-direction: column; gap: 15px; padding: 15px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .search-container { width: 100%; }
+            .search-input { flex-grow: 1; }
+            .news-grid { grid-template-columns: 1fr; }
+            .archive-layout { flex-direction: column; }
+            .chat-layout { grid-template-columns: 1fr; }
+            .news-section, .archive-section, .chat-section, .form-section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="navbar">
+            <ul class="nav-links" id="navLinks">
+                <li data-target="home" class="active">Главная</li>
+                <li data-target="news">Последние<br>сводки</li>
+                <li data-target="archive">Архив</li>
+                <li data-target="account">Личный кабинет</li>
+                <li data-target="chat">Онлайн беседа</li>
+            </ul>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search">
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+        </header>
+
+        <!-- Главная (Hero) -->
+        <main class="hero" id="home">
+            <div class="hero-content">
+                <p class="hero-subtitle">Norvinsk Сводка</p>
+            </div>
+        </main>
+
+        <!-- Последние сводки -->
+        <section class="news-section" id="news">
+            <h2 class="section-title">Последние сводки</h2>
+            <div class="news-grid">
+                <div class="news-card">
+                    <img src="jirinovski.png" alt="Сводка 1" class="news-img">
+                    <div class="news-text">
+                        Техас решил последовать примеру Норвинской области! 
+                        Сенатор Техаса Уильям Жириновски, пришедший к власти в 2022 году, решил объявить военное положение из-за деятельности TerraGroup. Местные жители уже начали заниматься мародерством, массовыми убийствами, грабежами на 20% реже. Что же будет дальше?- Это Техас, это вам не ирак и афганистан, тут 17 тысяч вооружённых до зубов фанатиков, и еще несколько миллионов вооружённых гражданских. Ваша USEC и Black Division даже пару дворов в пригороде взять не смогут без потерь! Сдавайтесь, и заплатите Техасу 17 миллиардов долларов, чтобы мы сняли блокаду штата! - заявил Сенатор.
+                    </div>
+                </div>
+                <div class="news-card">
+                    <img src="mops.png" alt="Сводка 2" class="news-img">
+                    <div class="news-text">
+                        СБЭУ Мопсики уничтожили Терминал!
+                        К удивлению общественности, ответственность за боестолкновение в Портовой зоне Берега, на себя взяла новая группировка СБЭУ Мопсиков.Представители Black Division попытавшиеся протестовать против этого заявления, пропали без вести!
+                        Чьим подрядчиком выступают представители столь опасной ОПГ, и кто их покровители, если они могут в открытую противостоять TerraGroup? Ответы ищите в следующих выпусках газеты
+                    </div>
+                </div>
+                <div class="news-card">
+                    <img src="tagilla.png" alt="Сводка 3" class="news-img">
+                    <div class="news-text">
+                        Дефицит гвоздей на Заводе!
+
+                        Герой труда Тарковского полихимического завода, Тагилла, отчитывается о рекордном количестве забитых гвоздей, что вызвало дефицит.Всех неравнодушных просьба сходить в цеха, и лично предложить свою помощь начальнику производства
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Архив -->
+        <section class="archive-section" id="archive">
+            <h2 class="section-title">Архив</h2>
+            <div class="archive-layout">
+                <div class="archive-left">
+                    <div class="archive-tabs" id="archiveTabs">
+                        <span class="active" data-filter="all">Общие</span>
+                        <span data-filter="local">Местные</span>
+                        <span data-filter="import">Импортные</span>
+                    </div>
+                    <div class="news-feed" id="newsFeed">
+                        <p class="feed-local"><span class="tag">@Местные</span><br>Новые стандарты призыва в ЧВК "BEAR". Руководство компании ввело новые правила.</p>
+                        <p class="feed-import"><span class="tag">@Импортные</span><br>Раскол в ЧВК "USEC". Бойцы недовольны закрытием ресторанов. Одна часть солдат бежит в сторону границы.</p>
+                        <p class="feed-general"><span class="tag">@Общие</span><br>Редактор газеты поехал чердаком! Обширный инсульт и отказ головного мозга настигли нашего редактора Максима.</p>
+                        <p class="feed-general"><span class="tag">@Общие</span><br>Телефонные мошенники в Норвинской области! Всем жителям необходимо позаботиться о защите своих сбережений.</p>
+                        <p class="feed-general"><span class="tag">@Общие</span><br>В центре города Тарков замечены колонны бронетехники и множество вооруженных людей говорящих по английски в форме ЧВК USEC, происходит что то странное. Следим за ситуацией "Кажется, началось..." - местный житель Вася Толстый</p>
+                    </div>
+                </div>
+                <div class="archive-map">
+                    <img src="aktyal.png" alt="Карта">
+                </div>
+            </div>
+        </section>
+
+        <!-- Форма аккаунта -->
+        <section class="form-section" id="account">
+            <h2 class="section-title">Личный аккаунт в чате</h2>
+            <form name="accountForm" id="accountForm" novalidate>
+                <label>
+                    Имя
+                    <input type="text" name="username" placeholder="Ваше имя">
+                </label>
+                <label>
+                    Email
+                    <input type="email" name="email" placeholder="you@example.com">
+                </label>
+                <label>
+                    Пароль (не короче 6 символов)
+                    <input type="password" name="password" placeholder="••••••">
+                </label>
+                <label>
+                    Никнейм в чате (от 3 до 15 символов)
+                    <input type="text" name="chatNick" placeholder="Например: Stalker_228">
+                </label>
+                <button type="submit">Создать аккаунт</button>
+            </form>
+        </section>
+
+        <!-- Чат -->
+        <section class="chat-section" id="chat">
+            <h2 class="section-title">Онлайн чат</h2>
+            <div class="chat-layout">
+                <!-- Левая панель: Профиль -->
+                <div class="chat-panel" id="chatProfile">
+                    <img src="norvinsk.png" alt="Профиль" class="chat-avatar" id="profileAvatar">
+                    <div id="profileName" style="font-weight: bold; color: #fff;">Гость</div>
+                </div>
+
+                <!-- Центр: Чат -->
+                <div class="chat-main">
+                    <div id="chatMessages" style="flex-grow: 1; width: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 14px; text-align: left; margin-bottom: 15px;">
+                        <div style="color: #888; font-style: italic;">Чат пуст. Напишите что-нибудь...</div>
+                    </div>
+                    <div style="display: flex; gap: 10px; width: 100%;">
+                        <input type="text" id="chatInput" placeholder="Введите сообщение..." style="flex-grow: 1; padding: 8px 12px; border-radius: 4px; border: 1px solid #555; background: #f0f0f0; color: #333; outline: none;">
+                        <button id="chatSendBtn" style="padding: 8px 20px; border-radius: 4px; border: none; background: #c9a227; color: #1a1a1a; font-weight: 600; cursor: pointer;">Отправить</button>
+                    </div>
+                </div>
+
+                <!-- Правая панель: Список онлайн -->
+                <div class="chat-panel" id="onlineUsers">
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #fff;">Онлайн:</div>
+                    <div style="color: #888; font-size: 12px;">Пока никого нет</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Bootstrap 4 JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Собственный скрипт сайта -->
+    <script src="js/site.js"></script>
+
+</body>
+</html>
